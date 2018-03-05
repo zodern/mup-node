@@ -1,0 +1,21 @@
+{
+  "name": "mup-node",
+  "version": "0.1.0",
+  "description": "Plugin for Meteor Up to deploy Node apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zodern",
+  "license": "MIT",
+  "dependencies": {
+    "contains-path": "^1.0.0",
+    "joi": "^12.0.0",
+    "mkdirp": "^0.5.1",
+    "random-seed": "^0.3.0",
+    "rimraf": "^2.6.2",
+    "tar": "^4.4.0",
+    "tmp": "0.0.33",
+    "uuid": "^3.2.1"
+  }
+}
