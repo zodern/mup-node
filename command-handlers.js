@@ -1,4 +1,3 @@
-//@ts-check
 var builder = require('./build');
 var random = require('random-seed');
 var uuid = require('uuid');
@@ -62,7 +61,9 @@ module.exports = {
       vars: {
         appName: appConfig.name,
         nodeVersion: appConfig.nodeVersion,
-        env: appConfig.env
+        env: appConfig.env,
+        startScript: appConfig.startScript,
+        buildInstructions: appConfig.docker.buildInstructions,
       }
     });
 

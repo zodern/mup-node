@@ -71,9 +71,21 @@ module.exports = {
       // Port the app is available on, defaults to 80
       PORT: 5000
     },
+    // Amount of time to allow the app to start
+    // If the app isn't running within this much time,
+    // mup rolls back to the previous version
+    deployCheckWaitTime: 60,
+    // NPM script to run when starting the app
+    startScript: 'start:production'
     docker: {
       args: ['--network=net'],
-      networks: ['net2', 'net3']
+      networks: ['net2', 'net3'],
+      // Dockerfile instructions to run before adding the app and running `npm install`
+      buildInstructions: [
+        // Copy some of the app's files needed for the post-install script
+        'COPY ./scripts ./scripts',
+        'RUN apt-get update && apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++ -y',
+      ]
     }
   }
 }

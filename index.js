@@ -11,6 +11,24 @@ function onlyNodeEnabled(commandName) {
   }
 }
 
+function setDefault(obj, path, value) {
+  var position = obj;
+
+  path.reduce((position, property, index) => {
+    if (index === path.length - 1) {
+      if (typeof position[property] === 'undefined') {
+        position[property] = value;
+      }
+    } else {
+      position[property] = position[property] || {};
+
+      return position[property];
+    }
+  }, obj);
+
+  return obj;
+}
+
 module.exports = {
   name: 'node',
   description: 'Deploy node.js apps',
@@ -56,6 +74,20 @@ module.exports = {
     'post.default.logs': onlyNodeEnabled('node.logs'),
     'post.default.start': onlyNodeEnabled('node.start'),
     'post.default.stop': onlyNodeEnabled('node.stop')
+  },
+  prepareConfig(config) {
+    if (!config.app || !config.app.type === 'node') {
+      return config;
+    }
+
+    setDefault(config, ['app', 'env', 'NODE_ENV'], 'production');
+
+    setDefault(config, ['app', 'docker', 'buildInsructions'], []);
+
+    setDefault(config, ['app', 'startScript'], 'start');
+    setDefault(config, ['app', 'nodeVersion'], 'latest');
+
+    return config;
   },
   validate: {
     app(config, utils) {

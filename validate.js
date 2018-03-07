@@ -1,4 +1,3 @@
-//@ts-check
 var joi = require('joi');
 
 var schema = joi.object().keys({
@@ -14,10 +13,13 @@ var schema = joi.object().keys({
         /[/s/S]*/,
         [joi.string(), joi.number(), joi.bool()]
   ),
+  startScript: joi.string(),
   docker: joi.object().keys({
     args: joi.array().items(joi.string()),
-    networks: joi.array().items(joi.string())
-  })
+    networks: joi.array().items(joi.string()),
+    buildInstructions: joi.array().items(joi.string())
+  }),
+  deployCheckWaitTime: joi.number()
 });
 
 module.exports = function(config, utils) {
@@ -26,6 +28,11 @@ module.exports = function(config, utils) {
   details = utils.combineErrorDetails(
     details,
     joi.validate(config.app, schema, utils.VALIDATE_OPTIONS)
+  );
+
+  details = utils.combineErrorDetails(
+    details,
+    utils.serversExist(config.servers, config.app.servers)
   );
 
   return details;

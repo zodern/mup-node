@@ -21,11 +21,17 @@ cd bundle
 sudo cat <<EOT > Dockerfile
 FROM node:<%= nodeVersion %>
 RUN mkdir -p /home/node/app || true
-COPY ./package.json /home/node/app/package.json
+
 WORKDIR /home/node/app
+<% for(var instruction in buildInstructions) { %>
+<%=  buildInstructions[instruction] %>
+<% } %>
+
+COPY ./package.json /home/node/app/package.json
 RUN npm install --unsafe-perm
 COPY ./ ./
-CMD [ "npm", "start" ]
+
+CMD [ "npm", "run", "<%= startScript %>" ]
 EOT
 
 sudo chmod 777 ./Dockerfile
