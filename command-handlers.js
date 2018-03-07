@@ -77,7 +77,7 @@ module.exports = {
     var appConfig = api.getConfig().app;
 
     var env = appConfig.env;
-    var exposePort = env.PORT || 80;
+    var exposePort = env.PORT;
 
     env.PORT = 3000
 
@@ -85,7 +85,7 @@ module.exports = {
       src: api.resolvePath(__dirname, 'assets/env.list'),
       dest: `/opt/${appConfig.name}/config/env.list`,
       vars: {
-        env: env || {},
+        env: env,
         appName: appConfig.name
       }
     });
@@ -95,7 +95,7 @@ module.exports = {
       dest: `/opt/${appConfig.name}/config/start.sh`,
       vars: {
         appName: appConfig.name,
-        docker: appConfig.docker || {},
+        docker: appConfig.docker,
         proxyConfig: api.getConfig().proxy,
         exposePort: exposePort
       }
@@ -126,7 +126,7 @@ module.exports = {
     list.executeScript('Verifying Deployment', {
       script: api.resolvePath(__dirname, 'assets/deploy-check.sh'),
       vars: {
-        deployCheckWaitTime: appConfig.deployCheckWaitTime || 60,
+        deployCheckWaitTime: appConfig.deployCheckWaitTime,
         appName: appConfig.name,
         deployCheckPort: 3000
       }

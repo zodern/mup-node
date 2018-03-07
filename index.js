@@ -76,16 +76,21 @@ module.exports = {
     'post.default.stop': onlyNodeEnabled('node.stop')
   },
   prepareConfig(config) {
-    if (!config.app || !config.app.type === 'node') {
+    var appConfig = config.app;
+
+    if (!appConfig || !appConfig.type === 'node') {
       return config;
     }
 
-    setDefault(config, ['app', 'env', 'NODE_ENV'], 'production');
 
-    setDefault(config, ['app', 'docker', 'buildInsructions'], []);
+    setDefault(appConfig, ['env', 'NODE_ENV'], 'production');
+    setDefault(appConfig, ['env', 'PORT'], 80);
 
-    setDefault(config, ['app', 'startScript'], 'start');
-    setDefault(config, ['app', 'nodeVersion'], 'latest');
+    setDefault(appConfig, ['docker', 'buildInsructions'], []);
+
+    setDefault(appConfig, ['startScript'], 'start');
+    setDefault(appConfig, ['nodeVersion'], 'latest');
+    setDefault(appConfig, ['deployCheckWaitTime'], 60);
 
     return config;
   },
