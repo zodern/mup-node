@@ -86,7 +86,7 @@ module.exports = {
     setDefault(appConfig, ['env', 'NODE_ENV'], 'production');
     setDefault(appConfig, ['env', 'PORT'], 80);
 
-    setDefault(appConfig, ['docker', 'buildInsructions'], []);
+    setDefault(appConfig, ['docker', 'buildInstructions'], []);
 
     setDefault(appConfig, ['startScript'], 'start');
     setDefault(appConfig, ['nodeVersion'], 'latest');
