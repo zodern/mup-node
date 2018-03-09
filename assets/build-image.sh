@@ -31,6 +31,10 @@ COPY ./package.json /home/node/app/package.json
 RUN npm install --unsafe-perm
 COPY ./ ./
 
+<% if(postInstallScript) { %>
+RUN npm run mup:postinstall
+<% } %>
+
 CMD [ "npm", "run", "<%= startScript %>" ]
 EOT
 

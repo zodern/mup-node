@@ -3,6 +3,7 @@ var random = require('random-seed');
 var uuid = require('uuid');
 var os = require('os');
 var path = require('path');
+var utils = require('./utils');
 
 function tmpBuildPath(appPath, api) {
   var rand = random.create(appPath);
@@ -49,6 +50,8 @@ module.exports = {
     var tmpPath = tmpBuildPath(appConfig.path, api);
     var list = nodemiral.taskList('Pushing App');
     var sessions = api.getSessions(['app']);
+    var npmScripts = utils.npmScripts(api, appConfig.path);
+    var postInstallScript = 'mup:postinstall' in npmScripts;
 
     list.copy('Pushing App bundle to the Server', {
       src: path.resolve(tmpPath, 'bundle.tar.gz'),
@@ -64,6 +67,7 @@ module.exports = {
         env: appConfig.env,
         startScript: appConfig.startScript,
         buildInstructions: appConfig.docker.buildInstructions,
+        postInstallScript: postInstallScript
       }
     });
 

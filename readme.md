@@ -51,6 +51,10 @@ Mup will upload your app, build a docker container, and run it.
 
 The base image is `node:<node version>`. As long as the package.json doesn't change, the `node_modules` is cached between deploys.
 
+You can add instructions to the Dockerfile in the config at `app.docker.buildInstructions`. For more details, look at the example in the next section.
+
+If your package.json has a `mup:postinstall` script, it will be run after `npm install`.
+
 ## Options
 
 `mup-node` is configured with the `app` object in your config. The available options are:
