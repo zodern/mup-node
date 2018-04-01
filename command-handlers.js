@@ -127,20 +127,23 @@ module.exports = {
         appName: appConfig.name
       }
     });
-    list.executeScript('Verifying Deployment', {
-      script: api.resolvePath(__dirname, 'assets/deploy-check.sh'),
-      vars: {
-        deployCheckWaitTime: appConfig.deployCheckWaitTime,
-        appName: appConfig.name,
-        deployCheckPort: 3000
-      }
-    })
+
+    if (appConfig.deployCheckWaitTime !== -1) {
+      list.executeScript('Verifying Deployment', {
+        script: api.resolvePath(__dirname, 'assets/deploy-check.sh'),
+        vars: {
+          deployCheckWaitTime: appConfig.deployCheckWaitTime,
+          appName: appConfig.name,
+          deployCheckPort: 3000
+        }
+      })
+    }
 
     var sessions = api.getSessions(['app']);
 
     return api.runTaskList(list, sessions, { verbose: api.verbose, series: true });
   },
-  stop(api,nodemiral) {
+  stop(api, nodemiral) {
     const appConfig = api.getConfig().app;
     const sessions = api.getSessions(['app']);
     const list = nodemiral.taskList('Stop Meteor');
