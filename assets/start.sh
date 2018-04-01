@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 APPNAME=<%= appName %>
 APP_PATH=/opt/$APPNAME
@@ -6,8 +7,10 @@ ENV_FILE=$APP_PATH/config/env.list
 APP_IMAGE=mup-<%= appName.toLowerCase() %>:latest
 PORT=<%= exposePort %>
 
+set +e
 sudo docker rm -f $APPNAME
 sudo docker network disconnect bridge -f $APPNAME
+set -e
 
 sudo docker run \
   -d \
