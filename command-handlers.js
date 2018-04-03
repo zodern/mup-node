@@ -49,9 +49,14 @@ module.exports = {
     var appConfig = api.getConfig().app;
     var tmpPath = tmpBuildPath(appConfig.path, api);
     var list = nodemiral.taskList('Pushing App');
-    var sessions = api.getSessions(['app']);
+    // var sessions = api.getSessions(['app']);
     var npmScripts = utils.npmScripts(api, appConfig.path);
     var postInstallScript = 'mup:postinstall' in npmScripts;
+    var startScript = 'start' in npmScripts;
+
+    if (!startScript) {
+      console.log('package.json is missing start script.');
+    }
 
     list.copy('Pushing App bundle to the Server', {
       src: path.resolve(tmpPath, 'bundle.tar.gz'),
