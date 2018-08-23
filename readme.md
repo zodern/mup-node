@@ -29,6 +29,15 @@ In the `app` section:
 - path: Path to the app, relative to the config.
 - type: Set to `node` to let mup know that this plugin will manage the app
 
+Add a `plugins` array with `mup-node`:
+
+```js
+module.exports = {
+  // ... rest of config
+  plugins: [ 'mup-node' ]
+};
+```
+
 Third, setup the server. Mup will install everything needed to run the app. Run:
 
 ```bash
@@ -90,6 +99,7 @@ module.exports = {
         'RUN apt-get update && apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++ -y',
       ]
     }
-  }
+  },
+  plugins: [ 'mup-node' ]
 };
 ```
