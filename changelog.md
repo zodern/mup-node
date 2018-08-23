@@ -1,6 +1,12 @@
+## 0.5.0 August 23, 2018
+
+- **Breaking Change** Environment variables from config are set when building the docker image. Due to this, dev dependencies will no longer be installed by default.
+- Copy package-lock.json into the docker container before installing dependencies
+- Update instructions to include adding `mup-node` to the array of plugins
+
 ## 0.4.0 April 2, 2018
 
-- Allow disabiling Verifying Deployment
+- Allow disabling Verifying Deployment
 - Show warning when package.json is missing a start script
 - Fix start task succeeding despite errors starting the container
 
