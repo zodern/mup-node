@@ -53,6 +53,7 @@ module.exports = {
     var npmScripts = utils.npmScripts(api, appConfig.path);
     var postInstallScript = 'mup:postinstall' in npmScripts;
     var startScript = 'start' in npmScripts;
+    var packageLock = utils.hasPackageLock(api, appConfig.path);
 
     if (!startScript) {
       console.log('package.json is missing start script.');
@@ -72,7 +73,8 @@ module.exports = {
         env: appConfig.env,
         startScript: appConfig.startScript,
         buildInstructions: appConfig.docker.buildInstructions,
-        postInstallScript: postInstallScript
+        postInstallScript: postInstallScript,
+        packageLock
       }
     });
 

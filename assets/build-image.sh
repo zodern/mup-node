@@ -32,7 +32,10 @@ ENV <% for(var key in env) { %> \
 <%=  buildInstructions[instruction] %>
 <% } %>
 
-COPY ./package.json /home/node/app/package.json
+COPY ./package.json ./package.json
+<% if (packageLock) { %>
+COPY ./package-lock.json ./package-lock.json
+<% } %>
 RUN npm install --unsafe-perm
 COPY ./ ./
 

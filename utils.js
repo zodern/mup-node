@@ -1,4 +1,5 @@
 var path = require('path');
+var fs = require('fs');
 
 module.exports = {
   npmScripts(api, appPath) {
@@ -6,5 +7,10 @@ module.exports = {
 
     var pkg = require(pkgPath);
     return pkg.scripts || {};
+  },
+  hasPackageLock(api, appPath) {
+    var lockPath = api.resolvePath(api.getBasePath(), appPath, 'package-lock.json');
+
+    return fs.existsSync(lockPath)
   }
 };
