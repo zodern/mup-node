@@ -10,8 +10,8 @@ var schema = joi.object().keys({
     joi.object().keys()
   ),
   env: joi.object().pattern(
-        /[/s/S]*/,
-        [joi.string(), joi.number(), joi.bool()]
+    /[/s/S]*/,
+    [joi.string().allow(""), joi.number(), joi.bool()]
   ),
   startScript: joi.string(),
   docker: joi.object().keys({
@@ -22,7 +22,7 @@ var schema = joi.object().keys({
   deployCheckWaitTime: joi.number()
 });
 
-module.exports = function(config, utils) {
+module.exports = function (config, utils) {
   var details = []
 
   details = utils.combineErrorDetails(
