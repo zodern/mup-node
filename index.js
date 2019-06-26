@@ -78,7 +78,7 @@ module.exports = {
   prepareConfig(config) {
     var appConfig = config.app;
 
-    if (!appConfig || !appConfig.type === 'node') {
+    if (!appConfig || appConfig.type !== 'node') {
       return config;
     }
 
