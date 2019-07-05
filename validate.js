@@ -17,7 +17,8 @@ var schema = joi.object().keys({
   docker: joi.object().keys({
     args: joi.array().items(joi.string()),
     networks: joi.array().items(joi.string()),
-    buildInstructions: joi.array().items(joi.string())
+    buildInstructions: joi.array().items(joi.string()),
+    imagePort: joi.number()
   }),
   deployCheckWaitTime: joi.number()
 });

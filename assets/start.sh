@@ -5,7 +5,9 @@ APPNAME=<%= appName %>
 APP_PATH=/opt/$APPNAME
 ENV_FILE=$APP_PATH/config/env.list
 APP_IMAGE=mup-<%= appName.toLowerCase() %>:latest
-PORT=<%= exposePort %>
+EXPOSED_PORT=<%= exposedPort %>
+PUBLISHED_PORT=<%= publishedPort %>
+BIND="0.0.0.0"
 
 set +e
 sudo docker rm -f $APPNAME
@@ -16,9 +18,9 @@ sudo docker run \
   -d \
   --restart=always \
   <% if (typeof proxyConfig === "object") { %> \
-  --expose=3000 \
+  --expose=$EXPOSED_PORT \
   <% } else { %> \
-  --publish=$PORT:3000 \
+  --publish=$BIND:$PUBLISHED_PORT:$EXPOSED_PORT \
   <% } %> \
   --hostname="$HOSTNAME-$APPNAME" \
   --env-file=$ENV_FILE \

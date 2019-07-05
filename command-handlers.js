@@ -88,9 +88,10 @@ module.exports = {
     var appConfig = api.getConfig().app;
 
     var env = appConfig.env;
-    var exposePort = env.PORT;
+    var publishedPort = env.PORT || 80;
+    var exposedPort = appConfig.docker.imagePort || 3000;
 
-    env.PORT = 3000
+    env.PORT = exposedPort;
 
     list.copy('Sending Environment Variables', {
       src: api.resolvePath(__dirname, 'assets/env.list'),
@@ -108,7 +109,8 @@ module.exports = {
         appName: appConfig.name,
         docker: appConfig.docker,
         proxyConfig: api.getConfig().proxy,
-        exposePort: exposePort
+        exposedPort: exposedPort,
+        publishedPort: publishedPort
       }
     })
 
@@ -141,7 +143,7 @@ module.exports = {
         vars: {
           deployCheckWaitTime: appConfig.deployCheckWaitTime,
           appName: appConfig.name,
-          deployCheckPort: 3000
+          deployCheckPort: appConfig.docker.imagePort || 3000
         }
       })
     }
