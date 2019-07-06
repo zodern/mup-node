@@ -54,7 +54,7 @@ Mup will upload your app, build a docker container, and run it.
 
 ## Bundling
 
-`mup-node` copies the app's files to the server. The `.git` and `node_module` directories are ignored.
+`mup-node` copies the app's files to the server. The `.git` and `node_module` directories are ignored.Additional directories can be ignored by creating a `.mupignore` file in your app's root folder. `.mupignore` uses the same syntax as `.gitignore`.
 
 ## Building Image
 

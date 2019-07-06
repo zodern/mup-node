@@ -4,6 +4,8 @@ var tar = require('tar');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var containsPath = require('contains-path');
+var ignore = require('ignore');
+var fs = require('fs');
 
 function cleanTmp(tmpPath) {
   try {
@@ -17,6 +19,11 @@ function cleanTmp(tmpPath) {
 
 module.exports = function (appPath, tmpPath, api) {
   cleanTmp(tmpPath);
+  const ig = ignore();
+  const ignorePath = api.resolvePath(appPath, '.mupignore');
+  if (fs.existsSync(ignorePath)) {
+    ig.add(fs.readFileSync(ignorePath).toString())
+  }
 
   return new Promise((resolve, reject) => {
     var bundlePath = api.resolvePath(tmpPath, 'bundle.tar.gz');
@@ -29,14 +36,22 @@ module.exports = function (appPath, tmpPath, api) {
       gzip: {
         level: 9
       },
-      filter(path, stat) {
-        if (containsPath(path, './.git')) {
+      filter(itemPath, stat) {
+        if (containsPath(itemPath, './.git')) {
           return false;
-        } else if (containsPath(path, './node_modules')) {
+        } else if (containsPath(itemPath, './node_modules')) {
           return false;
         }
-
-        return true;
+        
+        // Since itemPath usually starts with "./", we resolve it first so it isn't relative to the cwd
+        const relativePath = path.relative(appPath, path.resolve(appPath, itemPath));
+        if (relativePath.length === 0) {
+          return true;
+        }
+        
+        const result = !ig.ignores(relativePath);
+        
+        return result;
       }
     }, ['.'], (err) => {
       if (err) {
