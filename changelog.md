@@ -1,3 +1,10 @@
+## 0.6.0 July 5, 2019
+
+- `.mupignore` file can be used to exclude files and folders from being bundled
+- Add `app.docker.imagePort` option, which works the same as in Meteor Up for meteor apps
+- Remove validation warning for empty environment variables
+- Fix plugin modifying config when app type was not 'node'
+
 ## 0.5.0 August 23, 2018
 
 - **Breaking Change** Environment variables from config are set when building the docker image. Due to this, dev dependencies will no longer be installed by default.
