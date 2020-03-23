@@ -1,3 +1,8 @@
+## 0.7.0 March 23, 2020
+
+- Adds support for the `privateDockerRegistry` option
+- Adds `mup node destroy` command to remove app from the servers
+
 ## 0.6.0 July 5, 2019
 
 - `.mupignore` file can be used to exclude files and folders from being bundled
