@@ -57,6 +57,16 @@ module.exports = {
       description: 'View app\'s logs',
       handler: handlers.logs
     },
+    destroy: {
+      description: 'Remove app from server',
+      handler: handlers.destroy,
+      builder(subYargs) {
+        return subYargs.option('force', {
+          description: 'forces app to be removed',
+          boolean: true
+        });
+      }
+    },
     // hidden commands
     build: {
       description: false,

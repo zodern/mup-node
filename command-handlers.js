@@ -184,6 +184,47 @@ module.exports = {
 
     return api.runTaskList(list, sessions, { verbose: api.verbose });
   },
+  async destroy(api, nodemiral) {
+    const config = api.getConfig();
+    const options = api.getOptions();
+
+    if (!options.force) {
+      console.error('The destroy command completely removes the app from the server');
+      console.error('If you are sure you want to continue, use the `--force` option');
+      process.exit(1);
+    } else {
+      console.log('The app will be completely removed from the server.');
+      console.log('Waiting 5 seconds in case you want to cancel by pressing ctr + c');
+      await new Promise(resolve => setTimeout(resolve, 1000 * 5));
+    }
+
+    const list = nodemiral.taskList('Destroy App');
+    const sessions = api.getSessions(['app']);
+
+    if (api.swarmEnabled()) {
+      console.error('Destroying app when using swarm is not implemented');
+      process.exit(1);
+    }
+
+    list.executeScript('Stop App', {
+      script: api.resolvePath(__dirname, 'assets/stop.sh'),
+      vars: {
+        appName: config.app.name
+      }
+    });
+
+    list.executeScript('Destroy App', {
+      script: api.resolvePath(__dirname, 'assets/destroy.sh'),
+      vars: {
+        name: config.app.name
+      }
+    });
+
+    return api.runTaskList(list, sessions, {
+      series: true,
+      verbose: api.verbose
+    });
+  },
   logs(api) {
     var appConfig = api.getConfig().app;
     var args = api.getArgs();
