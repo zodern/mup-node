@@ -46,7 +46,10 @@ module.exports = {
     return builder(appPath, tmpBuildPath(appPath, api), api);
   },
   push(api, nodemiral) {
-    var appConfig = api.getConfig().app;
+    var {
+      app: appConfig,
+      privateDockerRegistry
+    } = api.getConfig();
     var tmpPath = tmpBuildPath(appConfig.path, api);
     var list = nodemiral.taskList('Pushing App');
     var sessions = api.getSessions(['app']);
@@ -74,7 +77,10 @@ module.exports = {
         startScript: appConfig.startScript,
         buildInstructions: appConfig.docker.buildInstructions,
         postInstallScript: postInstallScript,
-        packageLock
+        packageLock,
+        privateRegistry: privateDockerRegistry,
+        imagePrefix: utils.getImagePrefix(privateDockerRegistry),
+        imageName: utils.getImageName(appConfig)
       }
     });
 
@@ -85,7 +91,10 @@ module.exports = {
   },
   reconfig(api, nodemiral) {
     var list = nodemiral.taskList('Configuring App');
-    var appConfig = api.getConfig().app;
+    var {
+      app: appConfig,
+      privateDockerRegistry,
+    } = api.getConfig();
 
     var env = appConfig.env;
     var publishedPort = env.PORT || 80;
@@ -110,7 +119,10 @@ module.exports = {
         docker: appConfig.docker,
         proxyConfig: api.getConfig().proxy,
         exposedPort: exposedPort,
-        publishedPort: publishedPort
+        publishedPort: publishedPort,
+        privateRegistry: privateDockerRegistry,
+        imagePrefix: utils.getImagePrefix(privateDockerRegistry),
+        imageName: utils.getImageName(appConfig)
       }
     })
 
@@ -127,7 +139,10 @@ module.exports = {
       .then(() => api.runCommand('node.reconfig'));
   },
   start(api, nodemiral) {
-    var appConfig = api.getConfig().app;
+    var {
+      app: appConfig,
+      privateDockerRegistry,
+    } = api.getConfig();
     var list = nodemiral.taskList('Start App');
 
     list.executeScript('Starting the app', {
@@ -143,7 +158,10 @@ module.exports = {
         vars: {
           deployCheckWaitTime: appConfig.deployCheckWaitTime,
           appName: appConfig.name,
-          deployCheckPort: appConfig.docker.imagePort || 3000
+          deployCheckPort: appConfig.docker.imagePort || 3000,
+          imageName: utils.getImageName(appConfig),
+          imagePrefix: utils.getImagePrefix(privateDockerRegistry),
+          privateRegistry: privateDockerRegistry
         }
       })
     }

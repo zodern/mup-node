@@ -2,7 +2,7 @@
 
 APPNAME=<%= appName %>
 APP_PATH=/opt/$APPNAME
-IMAGE=mup-<%= appName.toLowerCase() %>
+IMAGE=<%- imagePrefix %><%= imageName %>
 START_SCRIPT=$APP_PATH/config/start.sh
 DEPLOY_CHECK_WAIT_TIME=<%= deployCheckWaitTime %>
 
@@ -14,11 +14,20 @@ cd $APP_PATH
 
 revert_app () {
   echo "=> Logs:"
-  sudo docker logs --tail=100 $APPNAME 1>&2
+  sudo docker logs --tail=300 $APPNAME 1>&2
+
+  <% if (privateRegistry) { %>
+    sudo docker pull $IMAGE:previous || true
+  <% } %>
 
   if sudo docker image inspect $IMAGE:previous >/dev/null 2>&1; then
     sudo docker tag $IMAGE:previous $IMAGE:latest
     sudo bash $START_SCRIPT > /dev/null 2>&1
+
+    <% if (privateRegistry) { %>
+      sudo docker push $IMAGE:latest
+      docker image prune -f
+    <% } %>
 
     echo " " 1>&2
     echo "=> Redeploying previous version of the app" 1>&2

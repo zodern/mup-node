@@ -12,5 +12,19 @@ module.exports = {
     var lockPath = api.resolvePath(api.getBasePath(), appPath, 'package-lock.json');
 
     return fs.existsSync(lockPath)
+  },
+  getImagePrefix(privateRegistry) {
+    if (privateRegistry && privateRegistry.imagePrefix) {
+      return `${privateRegistry.imagePrefix}/`;
+    }
+
+    return '';
+  },
+  getImageName(appConfig) {
+    if (appConfig.docker && appConfig.docker.imageName) {
+      return appConfig.docker.imageName;
+    }
+
+    return `mup-${appConfig.name.toLowerCase()}`;
   }
 };

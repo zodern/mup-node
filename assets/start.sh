@@ -4,7 +4,7 @@ set -e
 APPNAME=<%= appName %>
 APP_PATH=/opt/$APPNAME
 ENV_FILE=$APP_PATH/config/env.list
-APP_IMAGE=mup-<%= appName.toLowerCase() %>:latest
+APP_IMAGE=<%- imagePrefix %><%= imageName %>:latest
 EXPOSED_PORT=<%= exposedPort %>
 PUBLISHED_PORT=<%= publishedPort %>
 BIND="0.0.0.0"
@@ -32,4 +32,13 @@ echo "Started app's container"
 
 <% for(var network in docker.networks) { %>
   sudo docker network connect <%=  docker.networks[network] %> $APPNAME
+<% } %>
+
+
+# When using a private docker registry, the cleanup run when 
+# building the image is only done on one server, so we also
+# cleanup here so the other servers don't run out of disk space
+<% if (privateRegistry) { %>
+  echo "pruning images"
+  sudo docker image prune -f || true
 <% } %>

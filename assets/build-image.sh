@@ -4,7 +4,8 @@ set -e
 
 APPNAME=<%= appName %>
 APP_DIR=/opt/$APPNAME
-IMAGE=mup-<%= appName.toLowerCase() %>
+IMAGE_PREFIX=<%- imagePrefix %>
+IMAGE=$IMAGE_PREFIX'<%= imageName %>'
 BASE_IMAGE=node:<%= nodeVersion %>
 
 set +e
@@ -53,3 +54,11 @@ sudo rm -rf bundle
 sudo docker tag $IMAGE:latest $IMAGE:previous || true
 sudo docker tag $IMAGE:build $IMAGE:latest
 sudo docker image prune -f
+
+<% if (privateRegistry) { %>
+  echo "Pushing images to private registry"
+  # Fails if the previous tag doesn't exist (such as during the initial deploy)
+  sudo docker push $IMAGE:previous || true
+
+  sudo docker push $IMAGE:latest
+<% } %>
