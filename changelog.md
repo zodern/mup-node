@@ -1,3 +1,7 @@
+## 0.7.1 May 6, 2020
+
+- Support load balancing with Mup 1.5
+
 ## 0.7.0 March 23, 2020
 
 - Adds support for the `privateDockerRegistry` option
