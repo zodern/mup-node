@@ -17,7 +17,7 @@ set -e
 sudo docker run \
   -d \
   --restart=always \
-  <% if (typeof proxyConfig === "object") { %> \
+  <% if (typeof proxyConfig === "object" && !proxyConfig.loadBalancing) { %> \
   --expose=$EXPOSED_PORT \
   <% } else { %> \
   --publish=$BIND:$PUBLISHED_PORT:$EXPOSED_PORT \
