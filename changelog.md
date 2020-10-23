@@ -1,3 +1,7 @@
+## 0.8.0 October 23, 2020
+
+- Add `mup node debug` command. This lets you connect your local Node dev tools, for example those in Chrome, to your Node app running on the server.
+
 ## 0.7.1 May 6, 2020
 
 - Support load balancing with Mup 1.5
