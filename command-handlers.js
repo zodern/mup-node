@@ -235,5 +235,106 @@ module.exports = {
     var sessions = api.getSessions(['app']);
 
     return api.getDockerLogs(appConfig.name, sessions, args);
+  },
+  async debugApp(api) {
+    const {
+      servers,
+      app
+    } = api.getConfig();
+    let serverOption = api.getArgs()[2];
+
+    // Check how many sessions are enabled. Usually is all servers,
+    // but can be reduced by the `--servers` option
+    const enabledSessions = api.getSessions(['app'])
+      .filter(session => session);
+
+    if (!(serverOption in app.servers)) {
+      if (enabledSessions.length === 1) {
+        const selectedHost = enabledSessions[0]._host;
+        serverOption = Object.keys(app.servers).find(
+          name => servers[name].host === selectedHost
+        );
+      } else {
+        console.log('mup node debug <server>');
+        console.log('Available servers are:\n', Object.keys(app.servers).join('\n '));
+        process.exitCode = 1;
+
+        return;
+      }
+    }
+
+    const server = servers[serverOption];
+    console.log(`Setting up to debug app running on ${serverOption}`);
+
+    const {
+      output
+    } = await api.runSSHCommand(server, `docker exec -t ${app.name} sh -c 'kill -s USR1 $(pidof -s node)'`);
+
+    // normally is blank, but if something went wrong
+    // it will have the error message
+    console.log(output);
+
+    const {
+      output: startOutput
+    } = await api.runSSHCommand(server, `sudo docker rm -f node-debug; sudo docker run -d --name node-debug --network=container:${app.name} alpine/socat TCP-LISTEN:9228,fork TCP:127.0.0.1:9229`);
+    if (api.getVerbose()) {
+      console.log('output from starting node-debug', startOutput);
+    }
+
+    const {
+      output: ipAddress
+    } = await api.runSSHCommand(server, `sudo docker inspect --format="{{ range .NetworkSettings.Networks }} {{.IPAddress }} {{ end }}" ${app.name} | head -n 1`);
+
+    if (api.getVerbose()) {
+      console.log('container address', ipAddress);
+    }
+
+    const {
+      output: startOutput2
+    } = await api.runSSHCommand(server, `sudo docker rm -f node-debug-2; sudo docker run -d --name node-debug-2 -p 9227:9227 alpine/socat TCP-LISTEN:9227,fork TCP:${ipAddress.trim()}:9228`);
+
+    if (api.getVerbose()) {
+      console.log('output from starting node-debug-2', startOutput2);
+    }
+
+    let loggedConnection = false;
+
+    api.forwardPort({
+      server,
+      localAddress: '0.0.0.0',
+      localPort: 9229,
+      remoteAddress: '127.0.0.1',
+      remotePort: 9227,
+      onError(error) {
+        console.error(error);
+      },
+      onReady() {
+        console.log('Connected to server');
+        console.log('');
+        console.log('Debugger listening on ws://127.0.0.1:9229');
+        console.log('');
+        console.log('To debug:');
+        console.log('1. Open chrome://inspect in Chrome');
+        console.log('2. Select "Open dedicated DevTools for Node"');
+        console.log('3. Wait a minute while it connects and loads the app.');
+        console.log('   When it is ready, the app\'s files will appear in the Sources tab');
+        console.log('');
+        console.log('Warning: Do not use breakpoints when debugging a production server.');
+        console.log('They will pause your server when hit.');
+        console.log('Use logpoints or something else that does not pause the server');
+        console.log('');
+        console.log('The debugger will be enabled until the next time the app is restarted,');
+        console.log('though only accessible while this command is running');
+      },
+      onConnection() {
+        if (!loggedConnection) {
+          // It isn't guaranteed the debugger is connected, but not many
+          // other tools will try to connect to port 9229.
+          console.log('');
+          console.log('Detected by debugger');
+          loggedConnection = true;
+        }
+      }
+    });
   }
 }

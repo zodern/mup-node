@@ -75,6 +75,14 @@ module.exports = {
     push: {
       description: false,
       handler: handlers.push
+    },
+    debug: {
+      name: 'debug [server]',
+      description: 'Debug the meteor app',
+      builder(yargs) {
+        yargs.strict(false);
+      },
+      handler: handlers.debugApp
     }
   },
   hooks: {
