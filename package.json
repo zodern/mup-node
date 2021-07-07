@@ -1,6 +1,6 @@
 {
   "name": "mup-node",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Plugin for Meteor Up to deploy Node apps",
   "main": "index.js",
   "scripts": {
