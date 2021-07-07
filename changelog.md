@@ -1,3 +1,7 @@
+## 0.8.1 July 7, 2021
+
+- Allow overriding env for specific servers, similar to how mup does it for Meteor apps
+
 ## 0.8.0 October 23, 2020
 
 - Add `mup node debug` command. This lets you connect your local Node dev tools, for example those in Chrome, to your Node app running on the server.

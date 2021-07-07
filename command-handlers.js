@@ -92,6 +92,7 @@ module.exports = {
   reconfig(api, nodemiral) {
     var list = nodemiral.taskList('Configuring App');
     var {
+      servers,
       app: appConfig,
       privateDockerRegistry,
     } = api.getConfig();
@@ -102,9 +103,23 @@ module.exports = {
 
     env.PORT = exposedPort;
 
+    const hostVars = {};
+
+    Object.keys(appConfig.servers).forEach(key => {
+      if (appConfig.servers[key].env) {
+        const host = servers[key].host;
+        hostVars[host] = {
+          env: {
+            ...appConfig.servers[key].env,
+          }
+        };
+      }
+    });
+
     list.copy('Sending Environment Variables', {
       src: api.resolvePath(__dirname, 'assets/env.list'),
       dest: `/opt/${appConfig.name}/config/env.list`,
+      hostVars,
       vars: {
         env: env,
         appName: appConfig.name
