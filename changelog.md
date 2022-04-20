@@ -1,3 +1,7 @@
+## 0.8.2 April 20, 2022
+
+- Update tar
+
 ## 0.8.1 July 7, 2021
 
 - Allow overriding env for specific servers, similar to how mup does it for Meteor apps
