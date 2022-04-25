@@ -25,8 +25,8 @@ RUN mkdir -p /home/node/app || true
 
 WORKDIR /home/node/app
 
-ENV <% for(var key in env) { %> \
-  <%- key %>=<%- env[key] %> \
+<% for(var key in env) { %>
+ENV <%- key %> <%- env[key] %>
 <% } %>
 
 <% for(var instruction in buildInstructions) { %>
